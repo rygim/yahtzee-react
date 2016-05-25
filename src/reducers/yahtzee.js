@@ -16,9 +16,10 @@ function addUser(state, person) {
   return state;
 }
 
-function startGame(state, person) {
+function startGame(state, person, id) {
   state.activeGames = state.activeGames || [];
-  state.activeGames.push({ otherUser: { username: person }});
+  var game = { otherUser: { username: person }, id: id};
+  state.activeGames.push(game);
   return state;
 }
 
@@ -31,7 +32,7 @@ export default function(state = {}, action){
     case 'LOGIN':
       return setUserName(state, action.username);
     case 'START_GAME':
-      return startGame(state, action.person);
+      return startGame(state, action.person, action.id);
     case 'PERSON_ADD':
       return addUser(state, action.person);
   }

@@ -15,7 +15,7 @@ class AppComponent extends React.Component {
           <Route path="/" component={GameComponent} />
           <Route path="/list" component={GameComponent} />
           <Route path="/friends" component={FriendsComponent} />
-          <Route path="/game" component={PlayComponent} />
+          <Route path="/game/:gameid" component={PlayComponent} />
           <Route path="/stats" component={StatsComponent} />
         </Router>
     );

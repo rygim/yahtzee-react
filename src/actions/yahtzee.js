@@ -5,9 +5,10 @@ export function setActiveGame(gameId) {
   };
 }
 
-export function startGame(otherPerson) {
+export function startGame(otherPerson, id) {
   return {
     type: 'START_GAME',
-    person: otherPerson
+    person: otherPerson,
+    id: id
   };
 }
