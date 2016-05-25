@@ -1,0 +1,7 @@
+{
+  "generator-react-webpack": {
+    "appName": "reactYahtzee",
+    "style": "scss",
+    "postcss": false
+  }
+}
