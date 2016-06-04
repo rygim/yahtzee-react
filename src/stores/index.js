@@ -15,9 +15,28 @@ module.exports = function(initialState) {
   //init
   store.dispatch({
     type: 'SET_STATE',
-    state: {
-      'users': [{ username: 'rgimmy'}, {username: 'jgimmy'}]
-    }
+    state: {}
+  });
+
+  store.dispatch({
+    type: 'PERSON_ADD',
+    person: 'rgimmy'
+  });
+  
+  store.dispatch({
+    type: 'PERSON_ADD',
+    person: 'jgimmy'
+  });
+
+  store.dispatch({
+    type: 'LOGIN',
+    person: { name: 'rgimmy' }
+  });
+  
+  store.dispatch({
+    type: 'START_GAME',
+    person: 'jgimmy',
+    id: '123'
   });
 
   return store;

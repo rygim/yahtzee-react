@@ -12,3 +12,10 @@ export function startGame(otherPerson, id) {
     id: id
   };
 }
+
+export function roll(gameId) {
+  return {
+    type: 'ROLL',
+    id: gameId
+  };
+}

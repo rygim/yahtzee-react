@@ -3,18 +3,10 @@ require('styles/App.css');
 
 import React from 'react';
 import {MenuContainer} from './Menu';
-//import Cards from './Cards';
 import GameListActivity from './GameListActivity';
 import Header from './Header';
-//import Notifications from './Notifications';
 
 class GameComponent extends React.Component {
-
-//          <Notifications />
-//          <GameListActivity />
-//          <Cards />
-
-
   render() {
     return (
     <div className="mdl-layout__container">
@@ -27,7 +19,7 @@ class GameComponent extends React.Component {
         </div>
       </main>
     </div>
-</div>
+    </div>
     );
   }
 }

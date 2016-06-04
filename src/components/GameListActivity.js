@@ -7,15 +7,19 @@ import * as actionCreators from '../actions/yahtzee.js';
 
 class GameListActivity extends React.Component {
   render() {
+    var self = this;
     return (
         <div className="demo-graphs mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--12-col">
            <h2>Games</h2>
            <h4>Active Games</h4>
            <ul>
-           {this.props.games.map(game => <li key={game.id}>{game.otherUser.username}</li>)}
+           {Object.keys(this.props.games).map(gameId =>
+        <li key={this.props.games[gameId]}><a onClick={
+              () => {
+              self.context.router.push('/game/' + gameId);
+         }} className="mdl-button mdl-js-button mdl-js-ripple-effect" data-upgraded=",MaterialButton,MaterialRipple">{this.props.games[gameId].otherUser.name}</a></li>)}
            </ul>
            <h4>Completed Games</h4>
-           {this.props.completedGames.length == 0 ? 'You have no completed games!  Complete a game to make it show here' : this.props.completedGames.map(g => g.otherUser.username)}
         </div>
     );
   }
@@ -24,13 +28,15 @@ class GameListActivity extends React.Component {
 GameListActivity.defaultProps = {
 };
 
+GameListActivity.contextTypes = {
+  router: React.PropTypes.object
+};
+
 function mapStateToProps(state) {
-  let games = state.yahtzee.activeGames || [];
-  let completedGames = state.yahtzee.completedGames || [];
+  let games = state.yahtzee.activeGames || {};
   
   return {
-    games: games,
-    completedGames: completedGames
+    games: games
   };
 }
 

@@ -6,7 +6,6 @@ import {connect} from 'react-redux';
 import StartGameComponent from './StartGame';
 
 class FriendsActivity extends React.Component {
-
   render() {
     return (
         <div className="demo-graphs mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--12-col">
@@ -16,7 +15,7 @@ class FriendsActivity extends React.Component {
                  this.props.friends.map(f => <li key={f.username}>{f.username}</li>)}
             </ul>
            <h4>People</h4>
-             {this.props.people.map(p => <li key={p.username}><StartGameComponent username={p.username} /></li>)}
+             {this.props.people.map(p => <li key={p}><StartGameComponent username={p} /></li>)}
         </div>
     );
   }
@@ -26,7 +25,7 @@ FriendsActivity.defaultProps = {
 };
 
 function mapStateToProps(state) {
-  let friends = state.yahtzee.friends || [];
+  let friends = state.yahtzee.me.friends || [];
   let people = state.yahtzee.users || [];
 
   return {
