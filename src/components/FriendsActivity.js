@@ -8,7 +8,7 @@ import StartGameComponent from './StartGame';
 class FriendsActivity extends React.Component {
   render() {
     return (
-        <div className="demo-graphs mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--12-col">
+        <div className='demo-graphs mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--12-col'>
            <h2>Friends</h2>
             <ul>
            {this.props.friends.length == 0 ? 'Start playing with someone below!' :
@@ -25,8 +25,8 @@ FriendsActivity.defaultProps = {
 };
 
 function mapStateToProps(state) {
-  let friends = state.yahtzee.me.friends || [];
-  let people = state.yahtzee.users || [];
+  let friends = state.get('users');
+  let people = state.get('users');
 
   return {
     friends: friends,

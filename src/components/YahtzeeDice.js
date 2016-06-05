@@ -8,30 +8,26 @@ import {roll} from '../actions/yahtzee.js';
 class YahtzeeDice extends React.Component {
 
   render() {
-        console.log("yahtzee dice render");
     var game = this.props.game;
-    var currentTurns = game.turns.filter(t => t.result === undefined);
+    var currentTurns = game.get('turns').toArray().filter(t => t.result === undefined);
     if(currentTurns.length === 0){
       return <div>error... no current turn?</div>;
     }
 
     var currentTurn = currentTurns[0];
     
-    if(currentTurn.player !== this.props.game.me.name) {
+    if(currentTurn.get('player').get('name') !== game.get('me').get('name')) {
       return <div>waiting on other player</div>;
     }
     
-    if(!currentTurn.roll) {
-        console.log("no roll yet");
+    if(!currentTurn.get('roll')) {
         return ( <a onClick={
               () => {
-              this.props.roll(game.id);
-              this.context.router.push('/game/' + game.id);
-         }} className="mdl-button mdl-js-button mdl-js-ripple-effect" data-upgraded=",MaterialButton,MaterialRipple">Roll</a>)
+              this.props.roll(game.get('id'));
+         }} className='mdl-button mdl-js-button mdl-js-ripple-effect' data-upgraded=',MaterialButton,MaterialRipple'>Roll</a>)
     }
 
-
-    var dice = currentTurn.dice.map(d => d.held ? <div>held: {d.value}</div> : <div>{d.value}</div>);
+    var dice = currentTurn.get('dice').toArray().map((d,index) => d.get('held') ? <div key={index}>held: {d.get('value')}</div> : <div key={index}>{d.get('value')}</div>);
     if(currentTurn.roll > 2) {
        return <div>{dice}</div>;
     }
@@ -48,7 +44,6 @@ YahtzeeDice.contextTypes = {
 const mapDispatchToEvents = (dispatch) => {
   return {
     roll: (id) => {
-console.log("dispatching roll");
       dispatch(roll(id));
     }
   };

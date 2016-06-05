@@ -1,13 +1,14 @@
 require('normalize.css/normalize.css');
 require('styles/App.css');
 
+import {connect} from 'react-redux';
 import React from 'react';
 import YahtzeeDice from './YahtzeeDice';
 
 class YahtzeeBoard extends React.Component {
 
   userBoard(user) {
-    var turns = this.props.game.turns.filter((t) => t.player === user);
+    var turns = this.props.game.get('turns').toArray().filter((t) => t.player === user);
     var keyOrder = ['ones','twos','threes','fours','fives','sixes','three of a kind','four of a kind','full house','small straight','large straight','yahtzee','chance'];
     var userTurns = {};
     keyOrder.forEach(key => userTurns[key] = turns.filter(t => t.result === key));
@@ -16,15 +17,18 @@ class YahtzeeBoard extends React.Component {
   
   render() {
    var game = this.props.game;
-   var board = this.userBoard(this.props.game.me.name);
-   var opponentBoard = this.userBoard(this.props.game.otherUser.name);
+   
+   var name = game.get('me').get('name');
+   var otherUserName = game.get('otherUser').get('name');
+//   var board = this.userBoard(name);
+//   var opponentBoard = this.userBoard(otherUserName);
 
     return (
       <div>
       <YahtzeeDice game={this.props.game} />
       <table>
          <thead>
-           <tr><th></th><th>{game.me.name}</th><th>{game.otherUser.name}</th></tr>
+           <tr><th></th><th>{name}</th><th>{otherUserName}</th></tr>
            <tr><th>Move</th><th>Your Score</th><th>Their Score</th></tr>
          </thead>
        <tbody>
@@ -57,4 +61,16 @@ class YahtzeeBoard extends React.Component {
 YahtzeeBoard.defaultProps = {
 };
 
-export default YahtzeeBoard;
+const mapDispatchToEvents = () => {
+  return {
+  };
+};
+
+function mapStateToProps() {
+  return {
+  };
+}
+
+export default YahtzeeBoard = connect(mapStateToProps, mapDispatchToEvents)(YahtzeeBoard);
+
+

@@ -1,45 +1,46 @@
+import {fromJS, Map, List} from 'immutable';
+
 function setState(state, newState) {
-  return newState;
+  return state.merge(newState);
 }
 
 function setActiveGame(state, gameId) {
   return state.set('activeGame', gameId);
 }
 
-function setUserName(state, userName) {
-  return state.set('username', userName);
-}
-
 function addUser(state, person) {
-  state.users = state.users || [];
-  state.users.push(person);
-  console.log("added", person);
-  return state;
+  var users = state.get('users', List());
+  return state.set('users', users.push(fromJS(person)));
 }
 
 function startGame(state, person, id) {
-  state.activeGames = state.activeGames || {};
-  var game = { otherUser: { name: person }, startedGame: true, id: id, turns: [{ player: state.me.name }], me: state.me };
-  state.activeGames[id] = game;
-  console.log("started game with", person);
-  return state;
+  var activeGames = state.get('activeGames', Map());
+  
+  var game = { otherUser: { name: person }, id: id, turns: [{ player: state.get('me') }], me: state.get('me') };
+  
+  return state.set('activeGames', activeGames.set(id, fromJS(game)));
 }
 
 function roll(state, id){
-  var game = state.activeGames[id];
-  var currentTurn = game.turns[game.turns.length - 1];
+  var game = state.get('activeGames').get(id);
+  var currentTurn = game.get('turns').last();
   
   if(currentTurn.roll === 3) {
     return state;
   }
   
   if(!currentTurn.roll) {
-    currentTurn.roll = 1;
-    currentTurn.dice = []; 
+    var dice = List();
     for(var i = 0; i < 5; i++) {
-      currentTurn.dice.push({ held:false, value: Math.floor(Math.random() * (6 - 1)) + 1});
-    } 
-    state.activeGames[id].turns[game.turns.length - 1] = currentTurn;
+      dice = dice.push(fromJS({ held:false, value: Math.floor(Math.random() * (6 - 1)) + 1}));
+    }
+ 
+    var nextTurn = currentTurn.set('dice', dice).set('roll', 1);
+    
+    var newGame = game.set('turns', game.get('turns', List()).pop().push(nextTurn));
+   
+    var newState = state.set('activeGames', state.get('activeGames').set(id, newGame));
+    return newState;
   }
 
   
@@ -47,11 +48,12 @@ function roll(state, id){
 }
 
 function login(state, person) {
-  state.me = person;
-  return state;
+  var newState = state.set('me', fromJS(person));
+  
+  return newState;
 }
 
-export default function(state = {}, action){
+export default function(state = Map(), action){
   switch(action.type) {
     case 'SET_STATE':
       return setState(state, action.state);
@@ -59,8 +61,6 @@ export default function(state = {}, action){
       return login(state, action.person);
     case 'ACTIVE_GAME_SELECT':
       return setActiveGame(state, action.game);
-    case 'LOGIN':
-      return setUserName(state, action.username);
     case 'START_GAME':
       return startGame(state, action.person, action.id);
     case 'PERSON_ADD':
