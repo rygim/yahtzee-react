@@ -28,11 +28,13 @@ function roll(state, id){
   if(currentTurn.roll === 3) {
     return state;
   }
+
+  var roll = currentTurn.get('roll');
   
-  if(!currentTurn.roll) {
+  if(!roll) {
     var dice = List();
     for(var i = 0; i < 5; i++) {
-      dice = dice.push(fromJS({ held:false, value: Math.floor(Math.random() * (6 - 1)) + 1}));
+      dice = dice.push(fromJS({ held:false, value: Math.floor(Math.random() * (7 - 1)) + 1}));
     }
  
     var nextTurn = currentTurn.set('dice', dice).set('roll', 1);
@@ -43,6 +45,20 @@ function roll(state, id){
     return newState;
   }
 
+  if(roll < 3){
+    var dice = currentTurn.get('dice');
+    for(var i = 0; i < 5; i++) {
+      if(!dice.get(i).get('held')){
+         dice = dice.set(i, fromJS({ held:false, value: Math.floor(Math.random() * (7 - 1)) + 1}));
+      }
+    }
+    var nextTurn = currentTurn.set('dice', dice).set('roll', roll + 1);
+    
+    var newGame = game.set('turns', game.get('turns', List()).pop().push(nextTurn));
+   
+    var newState = state.set('activeGames', state.get('activeGames').set(id, newGame));
+    return newState;
+  }
   
   return state;
 }
