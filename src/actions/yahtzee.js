@@ -19,3 +19,19 @@ export function roll(gameId) {
     id: gameId
   };
 }
+
+export function toggleHold(gameId, index) {
+  return {
+    type: 'TOGGLE_HOLD',
+    id: gameId,
+    index: index
+  };
+}
+
+export function scoreDice(gameId, score) {
+  return {
+    type: 'SCORE',
+    id: gameId,
+    score: score
+  };
+}

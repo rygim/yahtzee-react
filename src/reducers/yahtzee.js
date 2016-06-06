@@ -21,52 +21,71 @@ function startGame(state, person, id) {
   return state.set('activeGames', activeGames.set(id, fromJS(game)));
 }
 
-function roll(state, id){
-  var game = state.get('activeGames').get(id);
+function rollDie(){
+  return fromJS({ held:false, value: Math.floor(Math.random() * (7 - 1)) + 1})
+}
+
+function score(state, gameId, score){
+  var game = state.get('activeGames').get(gameId);
   var currentTurn = game.get('turns').last();
-  
-  if(currentTurn.roll === 3) {
+
+  if(!currentTurn.get('dice')){
+    console.log("you have to roll!");
+    return state;
+  }
+ 
+  if(currentTurn.get('player') != state.get('me')){
+    console.log("it isnt your turn");
     return state;
   }
 
-  var roll = currentTurn.get('roll');
-  
-  if(!roll) {
-    var dice = List();
-    for(var i = 0; i < 5; i++) {
-      dice = dice.push(fromJS({ held:false, value: Math.floor(Math.random() * (7 - 1)) + 1}));
-    }
- 
-    var nextTurn = currentTurn.set('dice', dice).set('roll', 1);
-    
-    var newGame = game.set('turns', game.get('turns', List()).pop().push(nextTurn));
-   
-    var newState = state.set('activeGames', state.get('activeGames').set(id, newGame));
-    return newState;
+  if(currentTurn.get('score')){
+    console.log("it isnt your turn because you just went");
+    return state;
   }
 
-  if(roll < 3){
-    var dice = currentTurn.get('dice');
-    for(var i = 0; i < 5; i++) {
-      if(!dice.get(i).get('held')){
-         dice = dice.set(i, fromJS({ held:false, value: Math.floor(Math.random() * (7 - 1)) + 1}));
-      }
-    }
-    var nextTurn = currentTurn.set('dice', dice).set('roll', roll + 1);
-    
-    var newGame = game.set('turns', game.get('turns', List()).pop().push(nextTurn));
-   
-    var newState = state.set('activeGames', state.get('activeGames').set(id, newGame));
-    return newState;
+  var nextTurn = currentTurn.set('score', score);
+  var newGame = game.set('turns', game.get('turns', List()).pop().push(nextTurn));
+  console.log("scored", gameId, score);
+  return state.set('activeGames', state.get('activeGames').set(gameId, newGame));
+}
+
+function toggleHold(state, gameId, die) {
+  var game = state.get('activeGames').get(gameId);
+  var currentTurn = game.get('turns').last();
+  var dice = currentTurn.get('dice') || List();
+  dice = dice.set(die, dice.get(die).set('held', !dice.get(die).get('held')));
+  var nextTurn = currentTurn.set('dice', dice);
+  var newGame = game.set('turns', game.get('turns', List()).pop().push(nextTurn));
+  return state.set('activeGames', state.get('activeGames').set(gameId, newGame));
+}
+
+function roll(state, id){
+  var game = state.get('activeGames').get(id);
+  var currentTurn = game.get('turns').last();
+
+  var roll = currentTurn.get('roll') || 0;
+
+  if(roll > 3){
+    console.log('roll', roll);
+    return state;
   }
   
-  return state;
+  var dice = currentTurn.get('dice') || List();
+  
+  for(var i = 0; i < 5; i++) {
+    if(dice.size < 5 || !dice.get(i).get('held')){
+       dice = dice.set(i, rollDie());
+    }
+  }
+
+  var nextTurn = currentTurn.set('dice', dice).set('roll', roll + 1);
+  var newGame = game.set('turns', game.get('turns', List()).push(nextTurn));
+  return state.set('activeGames', state.get('activeGames').set(id, newGame));
 }
 
 function login(state, person) {
-  var newState = state.set('me', fromJS(person));
-  
-  return newState;
+  return state.set('me', fromJS(person));
 }
 
 export default function(state = Map(), action){
@@ -83,6 +102,10 @@ export default function(state = Map(), action){
       return addUser(state, action.person);
     case 'ROLL':
       return roll(state, action.id);
+    case 'TOGGLE_HOLD':
+      return toggleHold(state, action.id, action.index);
+    case 'SCORE':
+      return score(state, action.id, action.score);
   }
 
   return state;
