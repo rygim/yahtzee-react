@@ -16,7 +16,11 @@ function addUser(state, person) {
 function startGame(state, person, id) {
   var activeGames = state.get('activeGames', Map());
   
-  var game = { otherUser: { name: person }, id: id, turns: [{ player: state.get('me') }], me: state.get('me') };
+  var game = { started: new Date(), id: id, turns: [{ player: state.get('me') }], me: state.get('me') };
+
+  if(person !== state.get('me').name){
+    game.otherUser = { name: person };
+  }
   
   return state.set('activeGames', activeGames.set(id, fromJS(game)));
 }
@@ -29,24 +33,23 @@ function score(state, gameId, score){
   var game = state.get('activeGames').get(gameId);
   var currentTurn = game.get('turns').last();
 
+  //if there are no dice on the turn, you can't roll
   if(!currentTurn.get('dice')){
-    console.log("you have to roll!");
     return state;
   }
  
+  //It isn't your turn
   if(currentTurn.get('player') != state.get('me')){
-    console.log("it isnt your turn");
     return state;
   }
 
+  //the last turn was scored, so you need a new turn
   if(currentTurn.get('score')){
-    console.log("it isnt your turn because you just went");
     return state;
   }
 
   var nextTurn = currentTurn.set('score', score);
   var newGame = game.set('turns', game.get('turns', List()).pop().push(nextTurn));
-  console.log("scored", gameId, score);
   return state.set('activeGames', state.get('activeGames').set(gameId, newGame));
 }
 

@@ -12,10 +12,10 @@ class FriendsActivity extends React.Component {
            <h2>Friends</h2>
             <ul>
            {this.props.friends.length == 0 ? 'Start playing with someone below!' :
-                 this.props.friends.map(f => <li key={f.username}>{f.username}</li>)}
+                 this.props.friends.toArray().map(f => <li key={f}>{f}</li>)}
             </ul>
            <h4>People</h4>
-             {this.props.people.map(p => <li key={p}><StartGameComponent username={p} /></li>)}
+             {this.props.people.toArray().map(p => <li key={p}><StartGameComponent username={p} /></li>)}
         </div>
     );
   }
@@ -25,8 +25,8 @@ FriendsActivity.defaultProps = {
 };
 
 function mapStateToProps(state) {
-  let friends = state.get('users');
-  let people = state.get('users');
+  let friends = state.yahtzee.get('users');
+  let people = state.yahtzee.get('users');
 
   return {
     friends: friends,
